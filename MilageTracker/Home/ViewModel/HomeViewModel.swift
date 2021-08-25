@@ -1,51 +1,67 @@
 //
-//  ViewController.swift
+//  HomeViewModel.swift
 //  MilageTracker
 //
 //  Created by Uday on 25/08/21.
 //
 
-import UIKit
-import FirebaseAnalytics
+
 import CoreMotion
 
-class ViewController: UIViewController {
+class HomeViewModel: NSObject {
     
-    //MARK: Outlets
-    @IBOutlet weak var activityStatusLabel: UILabel!
-    @IBOutlet weak var stepCounterLabel: UILabel!
-    
-    //MARK: Constants:-
+    //MARK: Constants/var:-
     let activityManager = CMMotionActivityManager()
     let padoMeter = CMPedometer()
-
-    //MARK:-LifeCycle:-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-//        Analytics.logEvent("AppStart", parameters: [:])
-        setUpActivityManager()
-        setUpStepCounter()
+    var trips = [Trip]()
+    
+    
+    enum ActivityStatus{
+        case running
+        case stationary
+        case walking
+        case automotive
+        case bicycle
+        
+        var value: String {
+            switch self{
+                
+            case .running:
+                return "Running"
+            case .stationary:
+                return "Stopped"
+            case .walking:
+                return "Walking"
+            case .automotive:
+                return "In Vehical"
+            case .bicycle:
+                return "Bicycle"
+            }
+        }
     }
     
-    
     /// start tracking activity if feature is available in current device
-    func setUpActivityManager(){
+    /// - Parameter handler: get event updates
+    func startActivityManager(handler: @escaping (ActivityStatus)->()){
         if CMMotionActivityManager.isActivityAvailable(){
             self.activityManager.startActivityUpdates(to: .main) { data in
                 DispatchQueue.main.async {
                     if let activity = data{
                         if activity.running{
-                            self.activityStatusLabel.text = "Running"
                             print("Runnnnnning")
+                            handler(.running)
                         }else if activity.stationary{
-                            self.activityStatusLabel.text = "Stoped"
                             print("Stoped")
+                            handler(.stationary)
                         }else if activity.walking{
-                            self.activityStatusLabel.text = "walking"
                             print("walking")
+                            handler(.walking)
                         }else if activity.automotive{
-                            self.activityStatusLabel.text = "Automobile"
-                            print("Automobile")
+                            print("automotive")
+                            handler(.automotive)
+                        }else if activity.cycling{
+                            print("bicycle")
+                            handler(.bicycle)
                         }
                     }
                 }
@@ -54,7 +70,8 @@ class ViewController: UIViewController {
     }
     
     /// start step counting if feature is available in current device
-    func setUpStepCounter(){
+    /// - Parameter handler: get response of padometer
+    func startStepCounter(handler: @escaping (CMPedometerData)->()){
         if CMPedometer.isStepCountingAvailable(){
             self.padoMeter.startUpdates(from: Date()) { Data, Error in
                 if Error != nil{
@@ -63,11 +80,10 @@ class ViewController: UIViewController {
                 }
                 if let response = Data{
                     DispatchQueue.main.async {
-                        self.stepCounterLabel.text = "Steps: \(response.numberOfSteps)"
+                        handler(response)
                     }
                 }
             }
         }
-    } 
+    }
 }
-
