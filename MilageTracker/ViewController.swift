@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     
     //MARK: Outlets
     @IBOutlet weak var activityStatusLabel: UILabel!
+    @IBOutlet weak var stepCounterLabel: UILabel!
     
     //MARK: Constants:-
     let activityManager = CMMotionActivityManager()
@@ -23,10 +24,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 //        Analytics.logEvent("AppStart", parameters: [:])
         setUpActivityManager()
+        setUpStepCounter()
     }
     
     
-    /// start tracking activity if feature is available
+    /// start tracking activity if feature is available in current device
     func setUpActivityManager(){
         if CMMotionActivityManager.isActivityAvailable(){
             self.activityManager.startActivityUpdates(to: .main) { data in
@@ -50,7 +52,22 @@ class ViewController: UIViewController {
             }
         }
     }
-
-
+    
+    /// start step counting if feature is available in current device
+    func setUpStepCounter(){
+        if CMPedometer.isStepCountingAvailable(){
+            self.padoMeter.startUpdates(from: Date()) { Data, Error in
+                if Error != nil{
+                   //error handling
+                    print(Error?.localizedDescription as Any)
+                }
+                if let response = Data{
+                    DispatchQueue.main.async {
+                        self.stepCounterLabel.text = "Steps: \(response.numberOfSteps)"
+                    }
+                }
+            }
+        }
+    } 
 }
 
