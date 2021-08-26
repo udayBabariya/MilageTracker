@@ -30,6 +30,16 @@ class HomeViewController: UIViewController{
         viewModel?.startStepCounter(handler: { data in
             self.stepCounterLabel.text = "Total steps: \(data.numberOfSteps)"
         })
+        
+        // check for trip persistance data
+//        TripManager.shared.trip.distance = 5
+//        TripManager.shared.storeCurrentTrip {
+//            if let trips = TripManager.shared.fetchAllTripFromUserDefaults(){
+//                for trip in trips{
+//                    print(trip.distance)
+//                }
+//            }
+//        }
     }
     
     

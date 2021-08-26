@@ -11,11 +11,12 @@ import CoreMotion
 class HomeViewModel: NSObject {
     
     //MARK: Constants/var:-
-    let activityManager = CMMotionActivityManager()
-    let padoMeter = CMPedometer()
-    var trips = [Trip]()
+    private let activityManager = CMMotionActivityManager()
+    private let padoMeter = CMPedometer()
+    private var trips = [Trip]()
     
     
+    ///enum for activity status
     enum ActivityStatus{
         case running
         case stationary

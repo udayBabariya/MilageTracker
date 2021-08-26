@@ -9,7 +9,7 @@ import Foundation
 
 
 /// Trip Model
-struct Trip{
+struct Trip: Codable{
     var startTime: Date
     var endTime: Date
     var totalSteps: Int

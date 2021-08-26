@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        Analytics.logEvent("AppState: Active from Background", parameters: [:])
+        Analytics.logEvent("ActiveFromBackground", parameters: ["AppState":"Active from Background"])
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        Analytics.logEvent("AppState: moved to background", parameters: [:])
+        Analytics.logEvent("MovedToBackground", parameters: ["AppState":"Moved to background"])
     }
 
 
