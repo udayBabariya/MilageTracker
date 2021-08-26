@@ -16,6 +16,9 @@ class TripManager{
     private init() {
         currentTrip = Trip(startTime: Date(), endTime: Date(), totalSteps: 0, peace: 0, status: false, distance: 0)
     }
+   
+    //timer
+    var timer = Timer()
     
     /// to track active trip Status
     var isTripActive = false
@@ -31,7 +34,8 @@ class TripManager{
     // if stops for 5 mins (300 Sec) then store as 1 trip.
     var breakTime = 0{
         didSet{
-            if breakTime > 300{
+            if breakTime > 10{
+                print("break time exceed")
                 currentTrip.endTime = Date()
                 self.storeCurrentTrip() { [weak self] in
                     self?.startNewTrip()
@@ -42,13 +46,15 @@ class TripManager{
     
     /// store current active trip into userDefaults
     func storeCurrentTrip(success: @escaping ()->()){
-        UserDefaults.standard.set(try? PropertyListEncoder().encode(currentTrip), forKey:"currentTrip")
+        UserDefaults.standard.set(try? PropertyListEncoder().encode([currentTrip]), forKey:"currentTrip")
         success()
     }
     
     ///to start new trip
     func startNewTrip(){
         currentTrip = Trip(startTime: Date(), endTime: Date(), totalSteps: 0, peace: 0, status: false, distance: 0)
+        timer.invalidate()
+        breakTime = 0
     }
     
     /// to get all the trips stored in userDefaults
@@ -63,4 +69,22 @@ class TripManager{
         print("fetch Trips success",result as Any)
         return result
     }
+    
+    /// calculateBreakTime
+    func startBreak(){
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self
+                                     , selector: #selector(updateCurrentBreakTime), userInfo: nil, repeats: true)
+    }
+    
+    /// to update breakTime duration
+    @objc private func updateCurrentBreakTime(){
+        breakTime += 1
+    }
+    
+    /// to resume from break
+    func resumeWalking(){
+        timer.invalidate()
+        breakTime = 0
+    }
+    
 }

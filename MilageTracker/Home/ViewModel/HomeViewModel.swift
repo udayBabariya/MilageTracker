@@ -53,9 +53,11 @@ class HomeViewModel: NSObject {
                             handler(.running)
                         }else if activity.stationary{
                             print("Stoped")
+                            TripManager.shared.startBreak()
                             handler(.stationary)
                         }else if activity.walking{
                             print("walking")
+                            TripManager.shared.resumeWalking()
                             handler(.walking)
                         }else if activity.automotive{
                             print("automotive")
@@ -86,5 +88,5 @@ class HomeViewModel: NSObject {
                 }
             }
         }
-    }
+    } 
 }
