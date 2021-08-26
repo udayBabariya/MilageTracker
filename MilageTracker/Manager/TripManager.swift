@@ -34,8 +34,8 @@ class TripManager{
     // if stops for 5 mins (300 Sec) then store as 1 trip.
     var breakTime = 0{
         didSet{
-            if breakTime > 10{
-                print("break time exceed")
+            if breakTime > AppConfig.tripBreakTimeLimit{
+                print("break time exceed, if user start walking again it would be next trip")
                 currentTrip.endTime = Date()
                 self.storeCurrentTrip() { [weak self] in
                     self?.startNewTrip()
@@ -46,7 +46,7 @@ class TripManager{
     
     /// store current active trip into userDefaults
     func storeCurrentTrip(success: @escaping ()->()){
-        UserDefaults.standard.set(try? PropertyListEncoder().encode([currentTrip]), forKey:"currentTrip")
+        UserDefaults.standard.set(try? PropertyListEncoder().encode([currentTrip]), forKey:UserDefaultStrings.currentTrip)
         success()
     }
     
@@ -60,7 +60,7 @@ class TripManager{
     /// to get all the trips stored in userDefaults
     func fetchAllTripFromUserDefaults() -> [Trip]? {
         var result: [Trip]?
-        if let tripsData = UserDefaults.standard.value(forKey:"currentTrip") as? Data{
+        if let tripsData = UserDefaults.standard.value(forKey:UserDefaultStrings.currentTrip) as? Data{
             do{
                 guard let trips = try? PropertyListDecoder().decode([Trip].self, from: tripsData) else { return nil }
                 result = trips
